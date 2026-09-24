@@ -1,24 +1,21 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { AuthService } from '../../core/auth/auth.service';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { LsIcon } from '../../shared/ui/icon';
-import { LsAvatar } from '../../shared/ui/avatar';
-import { LsToastHost } from '../../shared/ui/toast-host';
-import { ProfileService } from './profile.service';
-import { TranslateService } from '../../core/i18n/translate.service';
-import { ToastService } from '../../core/toast/toast.service';
-import { parseApiError } from '../../core/api/api-error';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import { TranslateService } from '../../../../core/i18n/translate.service';
+import { ToastService } from '../../../../core/toast/toast.service';
+import { parseApiError } from '../../../../core/api/api-error';
+import { LsAvatar } from '../../../../shared/ui/avatar';
+import { LsIcon } from '../../../../shared/ui/icon';
+import { ProfileService } from '../../../profile/profile.service';
 
 @Component({
-  selector: 'ls-profile-settings',
-  imports: [RouterLink, DatePipe, TranslatePipe, LsIcon, LsAvatar, LsToastHost],
+  selector: 'ls-account-tab',
+  imports: [DatePipe, TranslatePipe, LsIcon, LsAvatar],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './profile-settings.html',
-  styleUrl: './profile-settings.css',
+  templateUrl: './account-tab.html',
 })
-export class ProfileSettingsComponent {
+export class AccountTab {
   readonly auth = inject(AuthService);
   readonly translate = inject(TranslateService);
   private readonly profileService = inject(ProfileService);
@@ -57,9 +54,5 @@ export class ProfileSettingsComponent {
 
   setLocale(locale: 'es' | 'en'): void {
     this.translate.setLocale(locale);
-  }
-
-  async logout(): Promise<void> {
-    await this.auth.logout();
   }
 }

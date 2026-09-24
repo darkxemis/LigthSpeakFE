@@ -1,0 +1,55 @@
+<span class="inline-flex items-center gap-1">
+  @if (voice.isPeerMuted(userId())) {
+    <ls-icon
+      name="volume-x"
+      [size]="size()"
+      class="shrink-0 text-beam-rose"
+      [attr.title]="'voice.peerMenu.mutedLocally' | t"
+    />
+  }
+  <button
+    type="button"
+    class="flex shrink-0 items-center justify-center rounded p-1 text-ink-dim transition hover:bg-aurora-hover hover:text-ink"
+    [attr.aria-label]="'voice.peerMenu.open' | t"
+    [attr.aria-expanded]="open() ? 'true' : 'false'"
+    (click)="toggle()"
+  >
+    <ls-icon name="settings" [size]="size()" [class.text-beam-cyan]="open()" />
+  </button>
+
+  @if (open()) {
+    <div
+      #popover
+      class="fixed z-30 w-44 rounded-lg border border-aurora-line bg-aurora-panel p-3 shadow-glow"
+      [style.top.px]="popoverTop()"
+      [style.left.px]="popoverLeft()"
+    >
+      <p class="mb-2 text-[11px] font-semibold tracking-wider text-ink-dim uppercase">
+        {{ 'voice.peerMenu.title' | t }}
+      </p>
+      <input
+        type="range"
+        min="0"
+        max="100"
+        step="5"
+        class="mb-1 w-full accent-beam-cyan"
+        [value]="voice.peerVolumeOf(userId())"
+        [attr.aria-label]="'voice.peerMenu.volume' | t"
+        (input)="onVolumeInput($event)"
+      />
+      <div class="mb-2 flex items-center justify-between text-[11px] text-ink-muted">
+        <span>{{ 'voice.peerMenu.volume' | t }}</span>
+        <span class="tabular-nums">{{ voice.peerVolumeOf(userId()) }}%</span>
+      </div>
+      <button
+        type="button"
+        class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition hover:bg-aurora-hover"
+        [class.text-beam-rose]="voice.isPeerMuted(userId())"
+        (click)="voice.togglePeerMuted(userId())"
+      >
+        <ls-icon [name]="voice.isPeerMuted(userId()) ? 'volume-x' : 'volume'" [size]="size()" />
+        {{ (voice.isPeerMuted(userId()) ? 'voice.peerMenu.unmute' : 'voice.peerMenu.mute') | t }}
+      </button>
+    </div>
+  }
+</span>

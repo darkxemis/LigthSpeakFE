@@ -20,6 +20,7 @@ import { LsAvatar } from '../../shared/ui/avatar';
 import { parseApiError } from '../../core/api/api-error';
 import { TranslateService } from '../../core/i18n/translate.service';
 import { ToastService } from '../../core/toast/toast.service';
+import { UserSettingsService } from '../../core/settings/user-settings.service';
 import type { MessageResult } from '../../shared/models/api.models';
 
 @Component({
@@ -34,6 +35,7 @@ export class ChatComponent {
   readonly servers = inject(ServersService);
   readonly voice = inject(VoiceService);
   readonly auth = inject(AuthService);
+  readonly settings = inject(UserSettingsService);
   private readonly translate = inject(TranslateService);
   private readonly toasts = inject(ToastService);
 
@@ -85,7 +87,6 @@ export class ChatComponent {
         void this.chat.closeChannel();
         this.showVoice.set(true);
       } else {
-        void this.voice.leave();
         this.showVoice.set(false);
         void this.chat.openChannel(id);
       }
@@ -166,7 +167,12 @@ export class ChatComponent {
   }
 
   onComposerKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key !== 'Enter') {
+      return;
+    }
+    const enterToSend = this.settings.settings().enterToSendEnabled;
+    const shouldSend = enterToSend ? !event.shiftKey : event.ctrlKey || event.metaKey;
+    if (shouldSend) {
       event.preventDefault();
       void this.send();
     }

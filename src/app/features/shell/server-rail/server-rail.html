@@ -49,13 +49,15 @@
   </button>
 
   <div class="mt-auto">
-    <a
-      routerLink="/app/settings/profile"
+    <button
+      type="button"
       class="flex h-12 w-12 items-center justify-center rounded-xl text-ink-muted transition hover:bg-aurora-hover hover:text-ink"
       [attr.title]="'shell.userSettings' | t"
+      [attr.aria-label]="'shell.userSettings' | t"
+      (click)="settingsUi.openDialog()"
     >
       <ls-icon name="settings" [size]="20" />
-    </a>
+    </button>
   </div>
 </nav>
 

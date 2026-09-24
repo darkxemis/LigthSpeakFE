@@ -1,0 +1,102 @@
+@if (ui.open()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="'shell.userSettings' | t"
+    (keydown.escape)="close()"
+  >
+    <button
+      type="button"
+      class="absolute inset-0 bg-aurora-void/80 backdrop-blur-sm"
+      [attr.aria-label]="'common.close' | t"
+      (click)="close()"
+    ></button>
+
+    <div
+      #panel
+      tabindex="-1"
+      class="aurora-card animate-fade-in-up relative z-10 flex h-[min(640px,88vh)] w-full max-w-5xl overflow-hidden rounded-2xl focus:outline-none"
+    >
+      <!-- Navigation rail -->
+      <nav
+        class="flex w-52 shrink-0 flex-col gap-1 border-r border-aurora-line bg-aurora-void/40 p-4 sm:w-60"
+        [attr.aria-label]="'shell.userSettings' | t"
+      >
+        <p class="beam-text mb-4 px-2 text-lg font-bold">{{ 'shell.userSettings' | t }}</p>
+
+        @for (tab of tabs; track tab.id) {
+          <button
+            type="button"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition"
+            [class.bg-aurora-hover]="ui.activeTab() === tab.id"
+            [class.text-beam-cyan]="ui.activeTab() === tab.id"
+            [class.text-ink-muted]="ui.activeTab() !== tab.id"
+            [class.hover:text-ink]="ui.activeTab() !== tab.id"
+            [attr.aria-current]="ui.activeTab() === tab.id ? 'true' : null"
+            (click)="ui.activeTab.set(tab.id)"
+          >
+            <ls-icon [name]="tab.icon" [size]="16" />
+            <span class="truncate">{{ tab.labelKey | t }}</span>
+          </button>
+        }
+
+        <div
+          class="mt-auto flex items-center gap-2 rounded-lg border border-aurora-line bg-aurora-panel/60 px-3 py-2"
+        >
+          <ls-avatar
+            [src]="auth.profile()?.profileImageUrl"
+            [name]="auth.displayName()"
+            size="sm"
+          />
+          <div class="min-w-0">
+            <p class="truncate text-xs font-medium text-ink">{{ auth.displayName() }}</p>
+            <p class="truncate text-[10px] text-ink-dim">{{ auth.profile()?.email }}</p>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Content -->
+      <div class="flex min-w-0 flex-1 flex-col">
+        <header
+          class="flex items-start justify-between gap-4 border-b border-aurora-line px-6 py-5"
+        >
+          <div class="min-w-0">
+            <h2 class="truncate text-xl font-semibold tracking-tight text-ink">
+              {{ activeTab().labelKey | t }}
+            </h2>
+            <p class="mt-1 text-sm text-ink-muted">{{ activeTab().descriptionKey | t }}</p>
+          </div>
+          <button
+            type="button"
+            class="rounded-md p-1.5 text-ink-muted transition hover:bg-aurora-hover hover:text-ink"
+            [attr.aria-label]="'common.close' | t"
+            (click)="close()"
+          >
+            <ls-icon name="x" [size]="18" />
+          </button>
+        </header>
+
+        <div class="min-h-0 flex-1 overflow-y-auto px-6 py-6">
+          @switch (ui.activeTab()) {
+            @case ('account') {
+              <ls-account-tab />
+            }
+            @case ('voice') {
+              <ls-voice-tab />
+            }
+            @case ('notifications') {
+              <ls-notifications-tab />
+            }
+            @case ('chat') {
+              <ls-chat-tab />
+            }
+            @case ('appearance') {
+              <ls-appearance-tab />
+            }
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}

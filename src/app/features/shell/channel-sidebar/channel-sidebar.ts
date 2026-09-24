@@ -6,11 +6,11 @@ import { ChatHubService } from '../../../core/realtime/chat-hub.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { LsIcon } from '../../../shared/ui/icon';
 import { LsAvatar } from '../../../shared/ui/avatar';
-import { CreateChannelDialog } from '../../servers/create-channel-dialog/create-channel-dialog';
+import { PeerAudioMenu } from '../../voice/peer-audio-menu/peer-audio-menu';
 
 @Component({
   selector: 'ls-channel-sidebar',
-  imports: [RouterLink, TranslatePipe, LsIcon, LsAvatar, CreateChannelDialog],
+  imports: [RouterLink, TranslatePipe, LsIcon, LsAvatar, PeerAudioMenu],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './channel-sidebar.html',
 })
@@ -21,7 +21,7 @@ export class ChannelSidebar {
   private readonly chatHub = inject(ChatHubService);
 
   readonly navigate = output<void>();
-  readonly createOpen = signal(false);
+  readonly createChannel = output<void>();
 
   readonly voiceParticipants = signal<
     Record<
@@ -29,6 +29,7 @@ export class ChannelSidebar {
       {
         userId: string;
         username: string;
+        profileImageUrl: string | null;
         isMuted: boolean;
         isSpeaking: boolean;
         isDeafened: boolean;
@@ -39,6 +40,7 @@ export class ChannelSidebar {
   voiceUsersFor(channelId: string): {
     userId: string;
     username: string;
+    profileImageUrl: string | null;
     isMuted: boolean;
     isSpeaking: boolean;
     isDeafened: boolean;
@@ -66,6 +68,7 @@ export class ChannelSidebar {
             {
               userId: string;
               username: string;
+              profileImageUrl: string | null;
               isMuted: boolean;
               isSpeaking: boolean;
               isDeafened: boolean;

@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 export type LsIconName =
   | 'hash'
   | 'volume'
+  | 'volume-x'
   | 'plus'
   | 'settings'
   | 'mic'
@@ -41,6 +42,7 @@ export type LsIconName =
 const PATHS: Record<LsIconName, string> = {
   hash: 'M9 4.5 7.5 19.5M16.5 4.5 15 19.5M4.5 9H20M4 15H19.5',
   volume: 'M11 5 6.5 9H3v6h3.5L11 19V5Zm4.5 3.5a5 5 0 0 1 0 7M18 6a8 8 0 0 1 0 12',
+  'volume-x': 'M11 5 6.5 9H3v6h3.5L11 19V5ZM16 9.5l5 5M21 9.5l-5 5',
   plus: 'M12 5v14M5 12h14',
   settings:
     'M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm8-3.5a8 8 0 0 0-.14-1.46l2.03-1.58-2-3.46-2.39.96a8 8 0 0 0-2.53-1.46L14.5 2h-4l-.47 2.94a8 8 0 0 0-2.53 1.46l-2.39-.96-2 3.46 2.03 1.58A8 8 0 0 0 4 12c0 .5.05.98.14 1.46L2.11 15.04l2 3.46 2.39-.96a8 8 0 0 0 2.53 1.46L10.5 22h4l.47-2.94a8 8 0 0 0 2.53-1.46l2.39.96 2-3.46-2.03-1.58c.09-.48.14-.97.14-1.46Z',

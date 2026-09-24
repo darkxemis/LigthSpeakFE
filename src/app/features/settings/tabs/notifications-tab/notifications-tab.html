@@ -1,0 +1,30 @@
+<div class="space-y-6">
+  <section>
+    <h3 class="aurora-label">{{ 'settings.notifications.title' | t }}</h3>
+    <p class="mb-1 text-xs text-ink-muted">{{ 'settings.notifications.hint' | t }}</p>
+
+    <ls-setting-row
+      [label]="'settings.notifications.desktop' | t"
+      [description]="'settings.notifications.desktopDesc' | t"
+      [disabled]="!canUseDesktopNotifications"
+    >
+      <ls-toggle
+        [checked]="model().desktopNotificationsEnabled"
+        [disabled]="!canUseDesktopNotifications"
+        [label]="'settings.notifications.desktop' | t"
+        (changed)="setDesktopNotifications($event)"
+      />
+    </ls-setting-row>
+
+    <ls-setting-row
+      [label]="'settings.notifications.messageSound' | t"
+      [description]="'settings.notifications.messageSoundDesc' | t"
+    >
+      <ls-toggle
+        [checked]="model().messageSoundEnabled"
+        [label]="'settings.notifications.messageSound' | t"
+        (changed)="settings.patch({ messageSoundEnabled: $event })"
+      />
+    </ls-setting-row>
+  </section>
+</div>

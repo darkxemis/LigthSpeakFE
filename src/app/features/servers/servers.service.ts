@@ -178,6 +178,7 @@ export class ServersService {
     participants: {
       userId: string;
       username: string;
+      profileImageUrl: string | null;
       isMuted: boolean;
       isSpeaking: boolean;
       isDeafened: boolean;
@@ -190,6 +191,7 @@ export class ServersService {
           participants: {
             userId: string;
             username: string;
+            profileImageUrl: string | null;
             isMuted: boolean;
             isSpeaking: boolean;
             isDeafened: boolean;

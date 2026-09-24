@@ -12,6 +12,7 @@ export const authUrls = {
 export const userUrls = {
   me: () => `${API_BASE}/users/me`,
   meProfileImage: () => `${API_BASE}/users/me/profile-image`,
+  meSettings: () => `${API_BASE}/users/me/settings`,
 } as const;
 
 export const serverUrls = {

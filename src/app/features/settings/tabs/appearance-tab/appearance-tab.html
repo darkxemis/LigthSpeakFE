@@ -1,0 +1,43 @@
+<div class="space-y-6">
+  <section>
+    <h3 class="aurora-label">{{ 'settings.appearance.accent' | t }}</h3>
+    <p class="mb-3 text-xs text-ink-muted">{{ 'settings.appearance.accentDesc' | t }}</p>
+    <div class="flex gap-3">
+      @for (accent of accents; track accent) {
+        <button
+          type="button"
+          class="h-10 w-10 rounded-full border-2 transition hover:scale-105"
+          [style.background]="accentPreviewStyle(accent)"
+          [class.border-ink]="model().accentColor === accent"
+          [class.border-aurora-line-strong]="model().accentColor !== accent"
+          [attr.aria-label]="('settings.appearance.accent.' + accent) | t"
+          [attr.aria-pressed]="model().accentColor === accent"
+          (click)="selectAccent(accent)"
+        >
+          @if (model().accentColor === accent) {
+            <span class="flex h-full w-full items-center justify-center text-aurora-void">
+              <ls-icon name="check" [size]="16" [strokeWidth]="3" />
+            </span>
+          }
+        </button>
+      }
+    </div>
+  </section>
+
+  <div class="beam-divider"></div>
+
+  <section>
+    <h3 class="aurora-label">{{ 'settings.appearance.motion' | t }}</h3>
+
+    <ls-setting-row
+      [label]="'settings.appearance.reducedMotion' | t"
+      [description]="'settings.appearance.reducedMotionDesc' | t"
+    >
+      <ls-toggle
+        [checked]="model().reducedMotionEnabled"
+        [label]="'settings.appearance.reducedMotion' | t"
+        (changed)="settings.patch({ reducedMotionEnabled: $event })"
+      />
+    </ls-setting-row>
+  </section>
+</div>

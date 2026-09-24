@@ -17,10 +17,10 @@
         <ls-icon name="inbox" [size]="16" />
         {{ 'shell.joinServer' | t }}
       </button>
-      <a routerLink="/app/settings/profile" class="aurora-btn-ghost">
+      <button type="button" class="aurora-btn-ghost" (click)="settingsUi.openDialog()">
         <ls-icon name="settings" [size]="16" />
         {{ 'shell.userSettings' | t }}
-      </a>
+      </button>
     </div>
 
     <p class="mt-10 max-w-sm text-xs text-ink-dim">{{ 'app.tagline' | t }}</p>

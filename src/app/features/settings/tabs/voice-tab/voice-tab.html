@@ -1,0 +1,131 @@
+<div class="space-y-6">
+  <!-- Microphone processing -->
+  <section>
+    <h3 class="aurora-label">{{ 'settings.voice.processing' | t }}</h3>
+    <p class="mb-1 text-xs text-ink-muted">{{ 'settings.voice.processingHint' | t }}</p>
+
+    <ls-setting-row
+      [label]="'settings.voice.noiseSuppression' | t"
+      [description]="'settings.voice.noiseSuppressionDesc' | t"
+    >
+      <ls-toggle
+        [checked]="model().noiseSuppressionEnabled"
+        [label]="'settings.voice.noiseSuppression' | t"
+        (changed)="settings.patch({ noiseSuppressionEnabled: $event })"
+      />
+    </ls-setting-row>
+
+    <ls-setting-row
+      [label]="'settings.voice.echoCancellation' | t"
+      [description]="'settings.voice.echoCancellationDesc' | t"
+    >
+      <ls-toggle
+        [checked]="model().echoCancellationEnabled"
+        [label]="'settings.voice.echoCancellation' | t"
+        (changed)="settings.patch({ echoCancellationEnabled: $event })"
+      />
+    </ls-setting-row>
+
+    <ls-setting-row
+      [label]="'settings.voice.autoGain' | t"
+      [description]="'settings.voice.autoGainDesc' | t"
+    >
+      <ls-toggle
+        [checked]="model().autoGainControlEnabled"
+        [label]="'settings.voice.autoGain' | t"
+        (changed)="settings.patch({ autoGainControlEnabled: $event })"
+      />
+    </ls-setting-row>
+  </section>
+
+  <div class="beam-divider"></div>
+
+  <!-- Output -->
+  <section>
+    <h3 class="aurora-label">{{ 'settings.voice.output' | t }}</h3>
+
+    <ls-setting-row
+      [label]="'settings.voice.outputVolume' | t"
+      [description]="'settings.voice.outputVolumeDesc' | t"
+    >
+      <div class="flex w-44 items-center gap-3 sm:w-56">
+        <input
+          type="range"
+          min="0"
+          max="100"
+          step="5"
+          class="w-full accent-beam-cyan"
+          [value]="model().outputVolume"
+          [attr.aria-label]="'settings.voice.outputVolume' | t"
+          (input)="onVolumeInput($event)"
+        />
+        <span class="w-9 text-right text-xs text-ink-muted tabular-nums">
+          {{ model().outputVolume }}%
+        </span>
+      </div>
+    </ls-setting-row>
+
+    <ls-setting-row
+      [label]="'settings.voice.sfx' | t"
+      [description]="'settings.voice.sfxDesc' | t"
+    >
+      <ls-toggle
+        [checked]="model().sfxEnabled"
+        [label]="'settings.voice.sfx' | t"
+        (changed)="settings.patch({ sfxEnabled: $event })"
+      />
+    </ls-setting-row>
+
+    <ls-setting-row
+      [label]="'settings.voice.startMuted' | t"
+      [description]="'settings.voice.startMutedDesc' | t"
+    >
+      <ls-toggle
+        [checked]="model().startMuted"
+        [label]="'settings.voice.startMuted' | t"
+        (changed)="settings.patch({ startMuted: $event })"
+      />
+    </ls-setting-row>
+  </section>
+
+  <div class="beam-divider"></div>
+
+  <!-- Push to talk -->
+  <section>
+    <h3 class="aurora-label">{{ 'settings.voice.pushToTalk' | t }}</h3>
+
+    <ls-setting-row
+      [label]="'settings.voice.pushToTalk' | t"
+      [description]="'settings.voice.pushToTalkDesc' | t"
+    >
+      <ls-toggle
+        [checked]="model().pushToTalkEnabled"
+        [label]="'settings.voice.pushToTalk' | t"
+        (changed)="settings.patch({ pushToTalkEnabled: $event })"
+      />
+    </ls-setting-row>
+
+    @if (model().pushToTalkEnabled) {
+      <ls-setting-row
+        [label]="'settings.voice.pushToTalkKey' | t"
+        [description]="'settings.voice.pushToTalkKeyDesc' | t"
+      >
+        <button
+          type="button"
+          class="aurora-btn-ghost min-w-32 !px-4 font-mono"
+          [class.!border-beam-cyan/60]="capturingKey()"
+          [class.!text-beam-cyan]="capturingKey()"
+          [attr.aria-label]="'settings.voice.pushToTalkKey' | t"
+          (click)="startCapture()"
+        >
+          @if (capturingKey()) {
+            {{ 'settings.voice.pressKey' | t }}
+          } @else {
+            {{ keyLabel(model().pushToTalkKey) }}
+          }
+        </button>
+      </ls-setting-row>
+      <p class="mt-2 text-[11px] text-ink-dim">{{ 'settings.voice.pressKeyHint' | t }}</p>
+    }
+  </section>
+</div>

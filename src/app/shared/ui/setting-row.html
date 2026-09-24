@@ -1,0 +1,14 @@
+<div
+  class="flex items-center justify-between gap-6 border-t border-aurora-line py-3.5 first:border-t-0"
+  [class.opacity-50]="disabled()"
+>
+  <div class="min-w-0">
+    <p class="text-sm font-medium text-ink">{{ label() }}</p>
+    @if (description()) {
+      <p class="mt-0.5 text-xs text-ink-muted">{{ description() }}</p>
+    }
+  </div>
+  <div class="shrink-0">
+    <ng-content />
+  </div>
+</div>

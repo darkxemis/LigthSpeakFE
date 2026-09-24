@@ -6,6 +6,7 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { LsIcon } from '../../../shared/ui/icon';
 import { CreateServerDialog } from '../../servers/create-server-dialog/create-server-dialog';
 import { JoinServerDialog } from '../../servers/join-server-dialog/join-server-dialog';
+import { SettingsUiService } from '../../settings/settings-ui.service';
 
 @Component({
   selector: 'ls-server-rail',
@@ -15,6 +16,7 @@ import { JoinServerDialog } from '../../servers/join-server-dialog/join-server-d
 })
 export class ServerRail {
   readonly servers = inject(ServersService);
+  readonly settingsUi = inject(SettingsUiService);
   private readonly router = inject(Router);
 
   readonly createOpen = signal(false);

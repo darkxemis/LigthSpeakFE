@@ -1,8 +1,9 @@
 <div class="flex items-center gap-2 px-2 py-2">
-  <a
-    routerLink="/app/settings/profile"
-    class="flex min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1.5 transition hover:bg-aurora-hover"
+  <button
+    type="button"
+    class="flex min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1.5 text-left transition hover:bg-aurora-hover"
     [attr.title]="'shell.userSettings' | t"
+    (click)="settingsUi.openDialog()"
   >
     <span class="relative">
       <ls-avatar [src]="auth.profile()?.profileImageUrl" [name]="auth.displayName()" size="sm" />
@@ -12,7 +13,7 @@
       <span class="block truncate text-sm font-medium text-ink">{{ auth.displayName() }}</span>
       <span class="block truncate text-[11px] text-ink-dim">{{ auth.profile()?.email }}</span>
     </span>
-  </a>
+  </button>
   <button
     type="button"
     class="rounded-md p-2 text-ink-muted transition hover:bg-aurora-hover hover:text-beam-rose"

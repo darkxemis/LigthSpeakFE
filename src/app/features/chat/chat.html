@@ -61,7 +61,11 @@
                     [class.bg-beam-lime/10]="voice.localSpeaking()"
                   >
                     <span class="relative shrink-0" [class.speaking-ring]="voice.localSpeaking()">
-                      <ls-avatar [name]="me.firstName + ' ' + me.lastName" size="sm" />
+                      <ls-avatar
+                        [src]="auth.profile()?.profileImageUrl"
+                        [name]="me.firstName + ' ' + me.lastName"
+                        size="sm"
+                      />
                     </span>
                     <span class="min-w-0 flex-1 truncate text-left text-sm text-ink">
                       {{ me.firstName }} {{ me.lastName }}
@@ -79,13 +83,21 @@
                 }
                 @for (peer of voice.peersSignal(); track peer.connectionId) {
                   <li
-                    class="flex items-center gap-3 rounded-md bg-aurora-void/50 px-3 py-2"
+                    class="relative flex items-center gap-3 rounded-md bg-aurora-void/50 px-3 py-2"
                     [class.bg-beam-lime/10]="peer.isSpeaking"
                   >
                     <span class="relative shrink-0" [class.speaking-ring]="peer.isSpeaking">
-                      <ls-avatar [name]="peer.username || peer.userId" size="sm" />
+                      <ls-avatar [src]="peer.profileImageUrl" [name]="peer.username || peer.userId" size="sm" />
                     </span>
                     <span class="min-w-0 flex-1 truncate text-left text-sm text-ink">{{ peer.username || peer.userId }}</span>
+                    @if (voice.isPeerMuted(peer.userId)) {
+                      <ls-icon
+                        name="volume-x"
+                        [size]="14"
+                        class="shrink-0 text-beam-rose"
+                        [attr.title]="'voice.peerMenu.mutedLocally' | t"
+                      />
+                    }
                     @if (peer.isMuted) {
                       <ls-icon name="mic-off" [size]="14" class="shrink-0 text-beam-rose" />
                     }
@@ -160,7 +172,7 @@
             @for (row of groupedMessages(); track row.message.id) {
               <article
                 class="group relative -mx-2 flex gap-3 rounded-md px-2 py-1.5 transition hover:bg-aurora-hover/40"
-                [class.mt-3]="!row.compact"
+                [class.mt-3]="!row.compact && !settings.settings().compactMessagesEnabled"
               >
                 <div class="w-10 shrink-0 pt-0.5">
                   @if (!row.compact) {
@@ -175,9 +187,11 @@
                   @if (!row.compact) {
                     <div class="mb-0.5 flex flex-wrap items-baseline gap-2">
                       <span class="text-sm font-semibold text-ink">{{ authorName(row.message) }}</span>
-                      <time class="text-[11px] text-ink-dim" [attr.datetime]="row.message.createdAt">
-                        {{ row.message.createdAt | date: 'short' }}
-                      </time>
+                      @if (settings.settings().showTimestampsEnabled) {
+                        <time class="text-[11px] text-ink-dim" [attr.datetime]="row.message.createdAt">
+                          {{ row.message.createdAt | date: 'short' }}
+                        </time>
+                      }
                     </div>
                   }
 
@@ -200,7 +214,11 @@
                       </div>
                     </div>
                   } @else {
-                    <p class="text-sm leading-relaxed whitespace-pre-wrap break-words text-ink/95">
+                    <p
+                      class="text-sm whitespace-pre-wrap break-words text-ink/95"
+                      [class.leading-snug]="settings.settings().compactMessagesEnabled"
+                      [class.leading-relaxed]="!settings.settings().compactMessagesEnabled"
+                    >
                       {{ row.message.content }}
                       @if (row.message.editedAt) {
                         <span class="ml-1 text-[10px] text-ink-dim">({{ 'common.edited' | t }})</span>
@@ -269,7 +287,14 @@
               <ls-icon name="send" [size]="16" />
             </button>
           </div>
-          <p class="mt-1.5 text-[11px] text-ink-dim">{{ 'chat.composer.hint' | t }}</p>
+          <p class="mt-1.5 text-[11px] text-ink-dim">
+            {{
+              (settings.settings().enterToSendEnabled
+                ? 'chat.composer.hint'
+                : 'chat.composer.hintCtrl'
+              ) | t
+            }}
+          </p>
         </div>
       </div>
     }

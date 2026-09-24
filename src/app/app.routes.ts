@@ -26,9 +26,8 @@ export const routes: Routes = [
       },
       {
         path: 'settings/profile',
-        loadComponent: () =>
-          import('./features/profile/profile-settings').then((m) => m.ProfileSettingsComponent),
-        title: 'LightSpeak · Profile',
+        redirectTo: '',
+        pathMatch: 'full',
       },
       {
         path: 'servers/:serverId/settings',

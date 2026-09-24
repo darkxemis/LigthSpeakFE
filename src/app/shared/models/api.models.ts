@@ -94,6 +94,51 @@ export const ROLE_LABEL: Record<ServerRole, string> = {
   2: 'owner',
 };
 
+export type AccentColor = 'cyan' | 'lime' | 'violet' | 'rose';
+
+export const ACCENT_COLORS: readonly AccentColor[] = ['cyan', 'lime', 'violet', 'rose'] as const;
+
+export interface UserSettingsResult {
+  userId: string;
+  noiseSuppressionEnabled: boolean;
+  echoCancellationEnabled: boolean;
+  autoGainControlEnabled: boolean;
+  sfxEnabled: boolean;
+  outputVolume: number;
+  startMuted: boolean;
+  pushToTalkEnabled: boolean;
+  pushToTalkKey: string;
+  desktopNotificationsEnabled: boolean;
+  messageSoundEnabled: boolean;
+  enterToSendEnabled: boolean;
+  showTimestampsEnabled: boolean;
+  compactMessagesEnabled: boolean;
+  reducedMotionEnabled: boolean;
+  accentColor: AccentColor;
+}
+
+export type UserSettingsPatch = Partial<UserSettingsResult>;
+
+/** Mirrors the backend `UserSettings.CreateDefault` values. */
+export const DEFAULT_USER_SETTINGS: UserSettingsResult = {
+  userId: '',
+  noiseSuppressionEnabled: true,
+  echoCancellationEnabled: true,
+  autoGainControlEnabled: true,
+  sfxEnabled: true,
+  outputVolume: 100,
+  startMuted: false,
+  pushToTalkEnabled: false,
+  pushToTalkKey: 'Space',
+  desktopNotificationsEnabled: false,
+  messageSoundEnabled: true,
+  enterToSendEnabled: true,
+  showTimestampsEnabled: true,
+  compactMessagesEnabled: false,
+  reducedMotionEnabled: false,
+  accentColor: 'cyan',
+};
+
 export function fullNameOf(member: {
   firstName: string;
   lastName: string;

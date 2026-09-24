@@ -1,0 +1,38 @@
+<div class="space-y-6">
+  <section>
+    <h3 class="aurora-label">{{ 'settings.chat.title' | t }}</h3>
+
+    <ls-setting-row
+      [label]="'settings.chat.enterToSend' | t"
+      [description]="'settings.chat.enterToSendDesc' | t"
+    >
+      <ls-toggle
+        [checked]="model().enterToSendEnabled"
+        [label]="'settings.chat.enterToSend' | t"
+        (changed)="settings.patch({ enterToSendEnabled: $event })"
+      />
+    </ls-setting-row>
+
+    <ls-setting-row
+      [label]="'settings.chat.showTimestamps' | t"
+      [description]="'settings.chat.showTimestampsDesc' | t"
+    >
+      <ls-toggle
+        [checked]="model().showTimestampsEnabled"
+        [label]="'settings.chat.showTimestamps' | t"
+        (changed)="settings.patch({ showTimestampsEnabled: $event })"
+      />
+    </ls-setting-row>
+
+    <ls-setting-row
+      [label]="'settings.chat.compactMessages' | t"
+      [description]="'settings.chat.compactMessagesDesc' | t"
+    >
+      <ls-toggle
+        [checked]="model().compactMessagesEnabled"
+        [label]="'settings.chat.compactMessages' | t"
+        (changed)="settings.patch({ compactMessagesEnabled: $event })"
+      />
+    </ls-setting-row>
+  </section>
+</div>

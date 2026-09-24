@@ -36,7 +36,7 @@
             type="button"
             class="rounded p-1 text-ink-dim transition hover:bg-aurora-hover hover:text-beam-lime"
             [attr.title]="'server.channel.create' | t"
-            (click)="createOpen.set(true)"
+            (click)="createChannel.emit()"
           >
             <ls-icon name="plus" [size]="14" />
           </button>
@@ -82,7 +82,7 @@
               [class.bg-beam-lime/10]="user.isSpeaking"
             >
               <span class="relative shrink-0" [class.speaking-ring]="user.isSpeaking">
-                <ls-avatar [name]="user.username" size="xs" />
+                <ls-avatar [src]="user.profileImageUrl" [name]="user.username" size="xs" />
               </span>
               <span class="min-w-0 flex-1 truncate">{{ user.username }}</span>
               @if (user.isMuted) {
@@ -91,17 +91,13 @@
               @if (user.isDeafened) {
                 <ls-icon name="headphones-off" [size]="12" class="shrink-0 text-beam-amber" />
               }
+              @if (user.userId !== auth.profile()?.id) {
+                <ls-peer-audio-menu [userId]="user.userId" [size]="12" />
+              }
             </div>
           }
         }
       </div>
     }
   </div>
-
-  <ls-create-channel-dialog
-    [open]="createOpen()"
-    [serverId]="servers.selectedServerId() ?? ''"
-    (dismiss)="createOpen.set(false)"
-    (created)="createOpen.set(false)"
-  />
 </div>

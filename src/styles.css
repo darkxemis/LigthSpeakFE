@@ -89,6 +89,22 @@
   button {
     font: inherit;
   }
+
+  button:not(:disabled),
+  input[type='button']:not(:disabled),
+  input[type='submit']:not(:disabled),
+  input[type='reset']:not(:disabled),
+  select:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  input:disabled,
+  textarea:disabled,
+  select:disabled {
+    cursor: not-allowed;
+  }
 }
 
 @utility aurora-bg {
@@ -142,7 +158,14 @@
 }
 
 @utility beam-divider {
-  background: linear-gradient(90deg, transparent, rgb(34 211 238 / 0.5), rgb(163 230 53 / 0.4), transparent);
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--color-beam-cyan) 50%, transparent),
+      color-mix(in srgb, var(--color-beam-lime) 40%, transparent),
+      transparent
+    );
   height: 1px;
 }
 
@@ -196,4 +219,36 @@
   box-shadow:
     0 0 0 2px var(--color-beam-lime),
     0 0 10px rgb(163 230 53 / 0.55);
+}
+
+/* Accent palettes (User settings → Appearance). Overriding the theme vars
+   re-tints every `beam-*` utility, gradient and focus ring at once. */
+html[data-accent='lime'] {
+  --color-beam-cyan: #a3e635;
+  --color-beam-teal: #84cc16;
+  --color-beam-lime: #facc15;
+  --shadow-beam: 0 0 24px rgb(163 230 53 / 0.3);
+}
+
+html[data-accent='violet'] {
+  --color-beam-cyan: #a78bfa;
+  --color-beam-teal: #8b5cf6;
+  --color-beam-lime: #c4b5fd;
+  --shadow-beam: 0 0 24px rgb(167 139 250 / 0.35);
+}
+
+html[data-accent='rose'] {
+  --color-beam-cyan: #fb7185;
+  --color-beam-teal: #f43f5e;
+  --color-beam-lime: #fda4af;
+  --shadow-beam: 0 0 24px rgb(251 113 133 / 0.35);
+}
+
+/* User settings → Appearance → reduced motion */
+html.reduced-motion *,
+html.reduced-motion *::before,
+html.reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
 }
