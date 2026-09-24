@@ -1,0 +1,107 @@
+<div class="flex min-h-0 flex-col">
+  <header class="flex h-12 items-center justify-between border-b border-aurora-line px-4">
+    <div class="min-w-0">
+      <p class="truncate text-sm font-semibold text-ink">
+        {{ servers.selectedServer()?.name ?? ('shell.yourServers' | t) }}
+      </p>
+    </div>
+    @if (servers.selectedServer()) {
+      <a
+        [routerLink]="['/app/servers', servers.selectedServerId(), 'settings']"
+        class="rounded-md p-1.5 text-ink-muted transition hover:bg-aurora-hover hover:text-ink"
+        [attr.title]="'common.settings' | t"
+        [attr.aria-label]="'common.settings' | t"
+      >
+        <ls-icon name="settings" [size]="16" />
+      </a>
+    }
+  </header>
+
+  <div class="min-h-0 flex-1 overflow-y-auto px-2 py-3">
+    @if (!servers.selectedServer()) {
+      <div class="px-2 py-6 text-center">
+        <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-aurora-hover text-beam-cyan">
+          <ls-icon name="server" [size]="22" />
+        </div>
+        <p class="text-sm text-ink-muted">{{ 'shell.noServersTitle' | t }}</p>
+        <p class="mt-1 text-xs text-ink-dim">{{ 'shell.noServersBody' | t }}</p>
+      </div>
+    } @else {
+      <div class="mb-4">
+        <div class="mb-1 flex items-center justify-between px-2">
+          <span class="text-[11px] font-semibold tracking-wider text-ink-dim uppercase">
+            {{ 'common.channels' | t }}
+          </span>
+          <button
+            type="button"
+            class="rounded p-1 text-ink-dim transition hover:bg-aurora-hover hover:text-beam-lime"
+            [attr.title]="'server.channel.create' | t"
+            (click)="createOpen.set(true)"
+          >
+            <ls-icon name="plus" [size]="14" />
+          </button>
+        </div>
+
+        @for (channel of servers.textChannels(); track channel.id) {
+          <a
+            [routerLink]="['/app/servers', channel.serverId, 'channels', channel.id]"
+            class="mb-0.5 flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-ink-muted transition hover:bg-aurora-hover hover:text-ink"
+            [class.bg-aurora-hover]="isActive(channel.id)"
+            [class.text-ink]="isActive(channel.id)"
+            (click)="navigate.emit()"
+          >
+            <ls-icon name="hash" [size]="15" class="text-ink-dim" />
+            <span class="truncate">{{ channel.name }}</span>
+          </a>
+        }
+
+        @if (servers.textChannels().length === 0) {
+          <p class="px-2 py-2 text-xs text-ink-dim">{{ 'common.empty' | t }}</p>
+        }
+      </div>
+
+      <div>
+        <span class="mb-1 block px-2 text-[11px] font-semibold tracking-wider text-ink-dim uppercase">
+          {{ 'common.voiceChannel' | t }}
+        </span>
+        @for (channel of servers.voiceChannels(); track channel.id) {
+          <a
+            [routerLink]="['/app/servers', channel.serverId, 'channels', channel.id]"
+            class="mb-0.5 flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-ink-muted transition hover:bg-aurora-hover hover:text-ink"
+            [class.bg-aurora-hover]="isActive(channel.id)"
+            [class.text-ink]="isActive(channel.id)"
+            (click)="navigate.emit()"
+          >
+            <ls-icon name="volume" [size]="15" class="text-ink-dim" />
+            <span class="truncate">{{ channel.name }}</span>
+          </a>
+          @for (user of voiceUsersFor(channel.id); track user.userId) {
+            <div
+              class="mb-0.5 ml-6 flex items-center gap-1.5 rounded-md border-l-2 border-transparent px-2 py-1 text-xs text-ink-muted"
+              [class.border-beam-lime]="user.isSpeaking"
+              [class.bg-beam-lime/10]="user.isSpeaking"
+            >
+              <span class="relative shrink-0" [class.speaking-ring]="user.isSpeaking">
+                <ls-avatar [name]="user.username" size="xs" />
+              </span>
+              <span class="min-w-0 flex-1 truncate">{{ user.username }}</span>
+              @if (user.isMuted) {
+                <ls-icon name="mic-off" [size]="12" class="shrink-0 text-beam-rose" />
+              }
+              @if (user.isDeafened) {
+                <ls-icon name="headphones-off" [size]="12" class="shrink-0 text-beam-amber" />
+              }
+            </div>
+          }
+        }
+      </div>
+    }
+  </div>
+
+  <ls-create-channel-dialog
+    [open]="createOpen()"
+    [serverId]="servers.selectedServerId() ?? ''"
+    (dismiss)="createOpen.set(false)"
+    (created)="createOpen.set(false)"
+  />
+</div>

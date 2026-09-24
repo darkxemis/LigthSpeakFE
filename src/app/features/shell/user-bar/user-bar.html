@@ -1,0 +1,25 @@
+<div class="flex items-center gap-2 px-2 py-2">
+  <a
+    routerLink="/app/settings/profile"
+    class="flex min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1.5 transition hover:bg-aurora-hover"
+    [attr.title]="'shell.userSettings' | t"
+  >
+    <span class="relative">
+      <ls-avatar [src]="auth.profile()?.profileImageUrl" [name]="auth.displayName()" size="sm" />
+      <span class="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full bg-status-online ring-2 ring-aurora-panel"></span>
+    </span>
+    <span class="min-w-0 flex-1">
+      <span class="block truncate text-sm font-medium text-ink">{{ auth.displayName() }}</span>
+      <span class="block truncate text-[11px] text-ink-dim">{{ auth.profile()?.email }}</span>
+    </span>
+  </a>
+  <button
+    type="button"
+    class="rounded-md p-2 text-ink-muted transition hover:bg-aurora-hover hover:text-beam-rose"
+    [attr.title]="'common.logout' | t"
+    [attr.aria-label]="'common.logout' | t"
+    (click)="logout.emit()"
+  >
+    <ls-icon name="logout" [size]="16" />
+  </button>
+</div>

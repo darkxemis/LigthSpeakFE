@@ -1,0 +1,108 @@
+<div class="aurora-bg min-h-full">
+  <div class="pointer-events-none absolute inset-0 overflow-hidden">
+    <div class="animate-aurora-drift absolute -top-32 -left-32 h-96 w-96 rounded-full bg-beam-cyan/20 blur-3xl"></div>
+    <div
+      class="animate-aurora-drift absolute top-1/3 -right-24 h-80 w-80 rounded-full bg-beam-violet/20 blur-3xl"
+      style="animation-delay: -4s"
+    ></div>
+    <div
+      class="animate-aurora-drift absolute -bottom-20 left-1/3 h-72 w-72 rounded-full bg-beam-lime/10 blur-3xl"
+      style="animation-delay: -8s"
+    ></div>
+  </div>
+
+  <div class="relative flex min-h-full items-center justify-center p-4">
+    <div class="w-full max-w-md">
+      <div class="mb-8 text-center">
+        <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-beam-cyan to-beam-lime text-aurora-void shadow-beam">
+          <ls-icon name="spark" [size]="28" [strokeWidth]="2" />
+        </div>
+        <h1 class="text-3xl font-bold tracking-tight">
+          <span class="beam-text">{{ 'app.name' | t }}</span>
+        </h1>
+        <p class="mt-2 text-sm text-ink-muted">{{ 'auth.login.subtitle' | t }}</p>
+      </div>
+
+      <form class="aurora-card space-y-4 rounded-2xl p-6" novalidate (submit)="onSubmit(); $event.preventDefault()">
+        <h2 class="text-xl font-semibold text-ink">{{ 'auth.login.title' | t }}</h2>
+
+        @if (serverError()) {
+          <div class="flex items-start gap-2 rounded-md border border-beam-rose/30 bg-beam-rose/10 px-3 py-2 text-sm text-beam-rose" role="alert">
+            <ls-icon name="alert" [size]="16" class="mt-0.5" />
+            <span>{{ serverError() }}</span>
+          </div>
+        }
+
+        <div>
+          <label class="aurora-label" for="login-email">{{ 'auth.email' | t }}</label>
+          <input
+            id="login-email"
+            type="email"
+            autocomplete="email"
+            class="aurora-input"
+            [formField]="loginForm.email"
+            [placeholder]="'auth.email' | t"
+          />
+          @if (loginForm.email().touched() && loginForm.email().invalid()) {
+            <p class="mt-1 text-xs text-beam-rose">
+              {{ (loginForm.email().errors()[0]?.message ?? 'validation.required') | t }}
+            </p>
+          }
+        </div>
+
+        <div>
+          <label class="aurora-label" for="login-password">{{ 'auth.password' | t }}</label>
+          <div class="relative">
+            <input
+              id="login-password"
+              [type]="showPassword() ? 'text' : 'password'"
+              autocomplete="current-password"
+              class="aurora-input pr-10"
+              [formField]="loginForm.password"
+              [placeholder]="'auth.password' | t"
+            />
+            <button
+              type="button"
+              class="absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 text-ink-muted hover:text-ink"
+              [attr.aria-label]="(showPassword() ? 'auth.hidePassword' : 'auth.showPassword') | t"
+              (click)="showPassword.update((v) => !v)"
+            >
+              <ls-icon [name]="showPassword() ? 'eye-off' : 'eye'" [size]="16" />
+            </button>
+          </div>
+          @if (loginForm.password().touched() && loginForm.password().invalid()) {
+            <p class="mt-1 text-xs text-beam-rose">
+              {{ (loginForm.password().errors()[0]?.message ?? 'validation.required') | t }}
+            </p>
+          }
+        </div>
+
+        <button
+          type="submit"
+          class="aurora-btn-primary w-full"
+          [disabled]="loginForm().invalid() || pending()"
+        >
+          @if (pending()) {
+            <span class="h-4 w-4 animate-spin rounded-full border-2 border-aurora-void/30 border-t-aurora-void"></span>
+            {{ 'auth.validating' | t }}
+          } @else {
+            {{ 'auth.login.submit' | t }}
+          }
+        </button>
+
+        <div class="beam-divider"></div>
+
+        <p class="text-center text-sm text-ink-muted">
+          {{ 'auth.login.noAccount' | t }}
+          <a routerLink="/register" class="ml-1 font-medium text-beam-cyan hover:underline">
+            {{ 'auth.login.createAccount' | t }}
+          </a>
+        </p>
+
+        <p class="text-center text-xs text-ink-dim">{{ 'auth.demoHint' | t }}</p>
+      </form>
+
+      <p class="mt-6 text-center text-xs text-ink-dim">{{ 'app.tagline' | t }}</p>
+    </div>
+  </div>
+</div>

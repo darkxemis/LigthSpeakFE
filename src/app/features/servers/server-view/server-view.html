@@ -1,0 +1,30 @@
+@if (loading()) {
+  <div class="flex h-full items-center justify-center">
+    <span class="h-8 w-8 animate-spin rounded-full border-2 border-beam-cyan/30 border-t-beam-cyan"></span>
+  </div>
+} @else if (error()) {
+  <div class="flex h-full flex-col items-center justify-center gap-3 p-8 text-center">
+    <ls-icon name="alert" [size]="32" class="text-beam-rose" />
+    <p class="text-sm text-ink-muted">{{ error() }}</p>
+  </div>
+} @else if (servers.textChannels().length === 0 && servers.voiceChannels().length === 0) {
+  <div class="aurora-bg flex h-full flex-col items-center justify-center gap-4 p-8 text-center">
+    <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-aurora-panel text-beam-lime">
+      <ls-icon name="hash" [size]="28" />
+    </div>
+    <h2 class="text-lg font-semibold text-ink">{{ 'shell.noServersTitle' | t }}</h2>
+    <p class="max-w-sm text-sm text-ink-muted">{{ 'shell.noServersBody' | t }}</p>
+    <button type="button" class="aurora-btn-primary" (click)="createChannelOpen.set(true)">
+      <ls-icon name="plus" [size]="16" />
+      {{ 'server.channel.create' | t }}
+    </button>
+  </div>
+  <ls-create-channel-dialog
+    [open]="createChannelOpen()"
+    [serverId]="servers.selectedServerId() ?? ''"
+    (dismiss)="createChannelOpen.set(false)"
+    (created)="onChannelCreated($event)"
+  />
+} @else {
+  <router-outlet />
+}

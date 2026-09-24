@@ -1,0 +1,308 @@
+<div class="flex h-full min-h-0">
+  <section class="flex min-w-0 flex-1 flex-col">
+    <!-- Header -->
+    <header class="flex h-12 shrink-0 items-center gap-3 border-b border-aurora-line bg-aurora-panel/50 px-4 backdrop-blur">
+      <ls-icon [name]="channelIcon()" [size]="18" class="text-ink-dim" />
+      <div class="min-w-0 flex-1">
+        <h1 class="truncate text-sm font-semibold text-ink">{{ channel()?.name }}</h1>
+      </div>
+      @if (!isVoiceChannel()) {
+        <button
+          type="button"
+          class="aurora-btn-ghost !px-2 lg:hidden"
+          [attr.aria-label]="'shell.toggleMembers' | t"
+          (click)="showMembers.update((v) => !v)"
+        >
+          <ls-icon name="users" [size]="16" />
+        </button>
+      }
+    </header>
+
+    @if (isVoiceChannel()) {
+      <div class="flex min-h-0 flex-1 flex-col items-center justify-center gap-6 p-8 text-center aurora-bg">
+        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-beam-lime/15 text-beam-lime">
+          <ls-icon name="volume" [size]="32" />
+        </div>
+        <div>
+          <h2 class="text-xl font-semibold text-ink">{{ channel()?.name }}</h2>
+          <p class="mt-1 text-sm text-ink-muted">
+            @if (voice.channelId() === channel()?.id) {
+              {{ 'voice.connected' | t }}
+            } @else {
+              {{ 'voice.join' | t }}
+            }
+          </p>
+        </div>
+
+        <button
+          type="button"
+          [class]="voice.channelId() === channel()?.id ? 'aurora-btn-danger' : 'aurora-btn-primary'"
+          [disabled]="voice.connecting()"
+          (click)="toggleVoice()"
+        >
+          @if (voice.connecting()) {
+            <span class="h-4 w-4 animate-spin rounded-full border-2 border-ink/30 border-t-ink"></span>
+          } @else {
+            <ls-icon [name]="voice.channelId() === channel()?.id ? 'logout' : 'mic'" [size]="16" />
+          }
+          {{ voice.channelId() === channel()?.id ? ('voice.leave' | t) : ('voice.join' | t) }}
+        </button>
+
+        @if (voice.channelId() === channel()?.id) {
+          <div class="aurora-card w-full max-w-md rounded-xl p-4">
+            <p class="mb-3 text-xs font-semibold tracking-wider text-ink-dim uppercase">{{ 'voice.peers' | t }}</p>
+            @if (voice.peersSignal().length === 0 && !voice.localSpeaking()) {
+              <p class="text-sm text-ink-muted">{{ 'voice.waiting' | t }}</p>
+            } @else {
+              <ul class="space-y-2">
+                @if (auth.profile(); as me) {
+                  <li
+                    class="flex items-center gap-3 rounded-md bg-aurora-void/50 px-3 py-2"
+                    [class.bg-beam-lime/10]="voice.localSpeaking()"
+                  >
+                    <span class="relative shrink-0" [class.speaking-ring]="voice.localSpeaking()">
+                      <ls-avatar [name]="me.firstName + ' ' + me.lastName" size="sm" />
+                    </span>
+                    <span class="min-w-0 flex-1 truncate text-left text-sm text-ink">
+                      {{ me.firstName }} {{ me.lastName }}
+                    </span>
+                    @if (!voice.micEnabled()) {
+                      <ls-icon name="mic-off" [size]="14" class="shrink-0 text-beam-rose" />
+                    }
+                    @if (voice.deafened()) {
+                      <ls-icon name="headphones-off" [size]="14" class="shrink-0 text-beam-amber" />
+                    }
+                    @if (voice.localSpeaking() && voice.micEnabled() && !voice.deafened()) {
+                      <span class="h-2 w-2 shrink-0 rounded-full bg-beam-lime"></span>
+                    }
+                  </li>
+                }
+                @for (peer of voice.peersSignal(); track peer.connectionId) {
+                  <li
+                    class="flex items-center gap-3 rounded-md bg-aurora-void/50 px-3 py-2"
+                    [class.bg-beam-lime/10]="peer.isSpeaking"
+                  >
+                    <span class="relative shrink-0" [class.speaking-ring]="peer.isSpeaking">
+                      <ls-avatar [name]="peer.username || peer.userId" size="sm" />
+                    </span>
+                    <span class="min-w-0 flex-1 truncate text-left text-sm text-ink">{{ peer.username || peer.userId }}</span>
+                    @if (peer.isMuted) {
+                      <ls-icon name="mic-off" [size]="14" class="shrink-0 text-beam-rose" />
+                    }
+                    @if (peer.isDeafened) {
+                      <ls-icon name="headphones-off" [size]="14" class="shrink-0 text-beam-amber" />
+                    }
+                    @if (peer.isSpeaking && !peer.isMuted) {
+                      <span class="h-2 w-2 shrink-0 rounded-full bg-beam-lime"></span>
+                    }
+                    <span class="text-[11px] text-ink-dim">{{ peer.connectionState }}</span>
+                  </li>
+                }
+              </ul>
+            }
+
+            <div class="mt-4 flex justify-center gap-2">
+              <button
+                type="button"
+                class="aurora-btn-ghost !px-3"
+                [class.!border-beam-rose/50]="!voice.micEnabled()"
+                [class.!text-beam-rose]="!voice.micEnabled()"
+                [disabled]="voice.deafened()"
+                [attr.aria-label]="(voice.micEnabled() ? 'voice.unmute' : 'voice.mute') | t"
+                [title]="voice.deafened() ? (('voice.mute' | t)) : (voice.micEnabled() ? ('voice.mute' | t) : ('voice.unmute' | t))"
+                (click)="voice.toggleMic()"
+              >
+                <ls-icon [name]="voice.micEnabled() && !voice.deafened() ? 'mic' : 'mic-off'" [size]="18" />
+              </button>
+              <button
+                type="button"
+                class="aurora-btn-ghost !px-3"
+                [class.!border-beam-amber/50]="voice.deafened()"
+                [class.!text-beam-amber]="voice.deafened()"
+                [attr.aria-label]="(voice.deafened() ? 'voice.undeafen' : 'voice.deafen') | t"
+                [title]="(voice.deafened() ? 'voice.undeafen' : 'voice.deafen') | t"
+                (click)="voice.toggleDeafen()"
+              >
+                <ls-icon [name]="voice.deafened() ? 'headphones-off' : 'headphones'" [size]="18" />
+              </button>
+            </div>
+          </div>
+        }
+
+        @if (voice.errorKey()) {
+          <p class="text-sm text-beam-rose">{{ voice.errorKey()! | t }}</p>
+        }
+      </div>
+    } @else {
+      <!-- Messages -->
+      <div class="relative flex min-h-0 flex-1 flex-col">
+        <div #messageScroll class="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+          @if (chat.loading() && chat.messages().length === 0) {
+            <div class="flex h-full items-center justify-center">
+              <span class="h-6 w-6 animate-spin rounded-full border-2 border-beam-cyan/30 border-t-beam-cyan"></span>
+            </div>
+          } @else if (chat.messages().length === 0) {
+            <div class="flex h-full flex-col items-center justify-center text-center">
+              <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-aurora-hover text-beam-cyan">
+                <ls-icon name="hash" [size]="22" />
+              </div>
+              <p class="text-sm text-ink-muted">{{ 'common.noMessages' | t }}</p>
+            </div>
+          } @else {
+            @if (chat.hasMore()) {
+              <div class="mb-4 text-center">
+                <button type="button" class="aurora-btn-ghost !py-1.5 text-xs" [disabled]="chat.loading()" (click)="chat.loadOlder()">
+                  {{ 'chat.loadOlder' | t }}
+                </button>
+              </div>
+            }
+
+            @for (row of groupedMessages(); track row.message.id) {
+              <article
+                class="group relative -mx-2 flex gap-3 rounded-md px-2 py-1.5 transition hover:bg-aurora-hover/40"
+                [class.mt-3]="!row.compact"
+              >
+                <div class="w-10 shrink-0 pt-0.5">
+                  @if (!row.compact) {
+                    <ls-avatar
+                      [src]="row.message.authorProfileImageUrl"
+                      [name]="authorName(row.message)"
+                      size="md"
+                    />
+                  }
+                </div>
+                <div class="min-w-0 flex-1">
+                  @if (!row.compact) {
+                    <div class="mb-0.5 flex flex-wrap items-baseline gap-2">
+                      <span class="text-sm font-semibold text-ink">{{ authorName(row.message) }}</span>
+                      <time class="text-[11px] text-ink-dim" [attr.datetime]="row.message.createdAt">
+                        {{ row.message.createdAt | date: 'short' }}
+                      </time>
+                    </div>
+                  }
+
+                  @if (editingId() === row.message.id) {
+                    <div class="space-y-2">
+                      <textarea
+                        class="aurora-input min-h-16 resize-none"
+                        rows="2"
+                        [value]="editDraft()"
+                        (input)="editDraft.set($any($event.target).value)"
+                        (keydown.escape)="cancelEdit()"
+                      ></textarea>
+                      <div class="flex gap-2">
+                        <button type="button" class="aurora-btn-primary !py-1 text-xs" (click)="saveEdit(row.message)">
+                          {{ 'chat.editSave' | t }}
+                        </button>
+                        <button type="button" class="aurora-btn-ghost !py-1 text-xs" (click)="cancelEdit()">
+                          {{ 'chat.editCancel' | t }}
+                        </button>
+                      </div>
+                    </div>
+                  } @else {
+                    <p class="text-sm leading-relaxed whitespace-pre-wrap break-words text-ink/95">
+                      {{ row.message.content }}
+                      @if (row.message.editedAt) {
+                        <span class="ml-1 text-[10px] text-ink-dim">({{ 'common.edited' | t }})</span>
+                      }
+                    </p>
+                  }
+                </div>
+
+                @if (editingId() !== row.message.id && canModerate(row.message)) {
+                  <div class="absolute top-0.5 right-0 hidden gap-1 rounded-md border border-aurora-line bg-aurora-panel p-0.5 shadow-glow group-hover:flex">
+                    @if (row.message.authorId === auth.profile()?.id) {
+                      <button
+                        type="button"
+                        class="rounded p-1.5 text-ink-muted hover:bg-aurora-hover hover:text-ink"
+                        [attr.aria-label]="'chat.editMessage' | t"
+                        (click)="startEdit(row.message)"
+                      >
+                        <ls-icon name="edit" [size]="14" />
+                      </button>
+                    }
+                    <button
+                      type="button"
+                      class="rounded p-1.5 text-ink-muted hover:bg-beam-rose/15 hover:text-beam-rose"
+                      [attr.aria-label]="'chat.deleteMessage' | t"
+                      (click)="removeMessage(row.message)"
+                    >
+                      <ls-icon name="trash" [size]="14" />
+                    </button>
+                  </div>
+                }
+              </article>
+            }
+          }
+        </div>
+
+        <!-- Typing -->
+        <div class="h-5 px-4 text-xs text-ink-dim">
+          @if (typingText(); as text) {
+            <span class="animate-pulse-soft">{{ text }}</span>
+          }
+        </div>
+
+        <!-- Composer -->
+        <div class="shrink-0 px-4 pb-4">
+          @if (sendError()) {
+            <p class="mb-2 rounded-md border border-beam-rose/30 bg-beam-rose/10 px-3 py-1.5 text-xs text-beam-rose" role="alert">
+              {{ sendError() }}
+            </p>
+          }
+          <div class="aurora-card flex items-end gap-2 rounded-xl px-3 py-2">
+            <textarea
+              class="max-h-40 min-h-10 flex-1 resize-none border-0 bg-transparent py-1.5 text-sm text-ink placeholder:text-ink-dim focus:outline-none"
+              rows="1"
+              [placeholder]="'chat.composer.placeholder' | t"
+              [value]="draft()"
+              (input)="onComposerInput($event)"
+              (keydown)="onComposerKeydown($event)"
+            ></textarea>
+            <button
+              type="button"
+              class="aurora-btn-primary !rounded-lg !px-3 !py-2"
+              [disabled]="!draft().trim()"
+              [attr.aria-label]="'common.send' | t"
+              (click)="send()"
+            >
+              <ls-icon name="send" [size]="16" />
+            </button>
+          </div>
+          <p class="mt-1.5 text-[11px] text-ink-dim">{{ 'chat.composer.hint' | t }}</p>
+        </div>
+      </div>
+    }
+  </section>
+
+  <!-- Members -->
+  @if (!isVoiceChannel() && showMembers()) {
+    <aside class="hidden w-56 shrink-0 border-l border-aurora-line bg-aurora-panel/40 lg:block">
+      <div class="p-3">
+        <h2 class="mb-2 px-1 text-[11px] font-semibold tracking-wider text-ink-dim uppercase">
+          {{ 'common.members' | t }}
+          <span class="ml-1 text-ink-dim">· {{ servers.members().length }}</span>
+        </h2>
+        <ul class="space-y-0.5">
+          @for (member of servers.members(); track member.userId) {
+            <li class="flex items-center gap-2 rounded-md px-2 py-1.5 transition hover:bg-aurora-hover">
+              <span class="relative">
+                <ls-avatar [src]="member.profileImageUrl" [name]="member.firstName + ' ' + member.lastName" size="sm" />
+                <span class="absolute -right-0.5 -bottom-0.5 h-2 w-2 rounded-full bg-status-online ring-2 ring-aurora-panel"></span>
+              </span>
+              <span class="min-w-0 flex-1 truncate text-sm text-ink-muted">{{ member.firstName }} {{ member.lastName }}</span>
+              @if (member.role >= 1) {
+                <ls-icon
+                  [name]="member.role === 2 ? 'crown' : 'shield'"
+                  [size]="13"
+                  [class.text-beam-amber]="member.role === 2"
+                  [class.text-beam-cyan]="member.role === 1"
+                />
+              }
+            </li>
+          }
+        </ul>
+      </div>
+    </aside>
+  }
+</div>

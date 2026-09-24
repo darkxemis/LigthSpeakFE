@@ -1,0 +1,31 @@
+<div class="aurora-bg flex h-full flex-col">
+  <div class="flex flex-1 flex-col items-center justify-center p-8 text-center">
+    <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-beam-cyan to-beam-lime text-aurora-void shadow-beam">
+      <ls-icon name="spark" [size]="40" [strokeWidth]="2" />
+    </div>
+    <h1 class="beam-text text-3xl font-bold tracking-tight">{{ 'app.name' | t }}</h1>
+    <p class="mt-2 max-w-md text-sm text-ink-muted">
+      {{ 'shell.noServersBody' | t }}
+    </p>
+
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+      <button type="button" class="aurora-btn-primary" (click)="createOpen.set(true)">
+        <ls-icon name="plus" [size]="16" />
+        {{ 'shell.createServer' | t }}
+      </button>
+      <button type="button" class="aurora-btn-ghost" (click)="joinOpen.set(true)">
+        <ls-icon name="inbox" [size]="16" />
+        {{ 'shell.joinServer' | t }}
+      </button>
+      <a routerLink="/app/settings/profile" class="aurora-btn-ghost">
+        <ls-icon name="settings" [size]="16" />
+        {{ 'shell.userSettings' | t }}
+      </a>
+    </div>
+
+    <p class="mt-10 max-w-sm text-xs text-ink-dim">{{ 'app.tagline' | t }}</p>
+  </div>
+</div>
+
+<ls-create-server-dialog [open]="createOpen()" (dismiss)="createOpen.set(false)" (created)="createOpen.set(false)" />
+<ls-join-server-dialog [open]="joinOpen()" (dismiss)="joinOpen.set(false)" (joined)="joinOpen.set(false)" />

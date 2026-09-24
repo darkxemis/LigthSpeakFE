@@ -1,0 +1,38 @@
+<ls-modal
+  [open]="open()"
+  [title]="'server.join.title' | t"
+  [subtitle]="'server.join.subtitle' | t"
+  (dismiss)="dismiss.emit()"
+>
+  <form class="space-y-4" novalidate (submit)="onSubmit(); $event.preventDefault()">
+    @if (error()) {
+      <p class="rounded-md border border-beam-rose/30 bg-beam-rose/10 px-3 py-2 text-sm text-beam-rose" role="alert">
+        {{ error() }}
+      </p>
+    }
+
+    <div>
+      <label class="aurora-label" for="invite-code">{{ 'server.join.codeLabel' | t }}</label>
+      <input
+        id="invite-code"
+        class="aurora-input"
+        [formField]="joinForm.code"
+        [placeholder]="'server.join.codePlaceholder' | t"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      @if (joinForm.code().touched() && joinForm.code().invalid()) {
+        <p class="mt-1 text-xs text-beam-rose">
+          {{ (joinForm.code().errors()[0]?.message ?? 'validation.required') | t }}
+        </p>
+      }
+    </div>
+
+    <div class="flex justify-end gap-2 pt-2">
+      <button type="button" class="aurora-btn-ghost" (click)="dismiss.emit()">{{ 'common.cancel' | t }}</button>
+      <button type="submit" class="aurora-btn-primary" [disabled]="joinForm().invalid() || pending()">
+        {{ 'server.join.submit' | t }}
+      </button>
+    </div>
+  </form>
+</ls-modal>

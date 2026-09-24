@@ -1,0 +1,58 @@
+<ls-modal
+  [open]="open()"
+  [title]="'server.channel.create' | t"
+  (dismiss)="dismiss.emit()"
+>
+  <form class="space-y-4" novalidate (submit)="onSubmit(); $event.preventDefault()">
+    <div>
+      <label class="aurora-label" for="channel-name">{{ 'server.channel.nameLabel' | t }}</label>
+      <input
+        id="channel-name"
+        class="aurora-input"
+        [formField]="channelForm.name"
+        [placeholder]="'server.channel.namePlaceholder' | t"
+        autocomplete="off"
+      />
+      @if (channelForm.name().touched() && channelForm.name().invalid()) {
+        <p class="mt-1 text-xs text-beam-rose">
+          {{ (channelForm.name().errors()[0]?.message ?? 'validation.required') | t }}
+        </p>
+      }
+    </div>
+
+    <fieldset>
+      <legend class="aurora-label">{{ 'server.channel.typeLabel' | t }}</legend>
+      <div class="grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          class="aurora-btn w-full justify-start rounded-md border px-3 py-3 text-left text-sm"
+          [class.border-beam-cyan]="type() === 0"
+          [class.bg-beam-cyan/10]="type() === 0"
+          [class.border-aurora-line-strong]="type() !== 0"
+          (click)="type.set(0)"
+        >
+          <ls-icon name="hash" [size]="16" />
+          <span>{{ 'common.textChannel' | t }}</span>
+        </button>
+        <button
+          type="button"
+          class="aurora-btn w-full justify-start rounded-md border px-3 py-3 text-left text-sm"
+          [class.border-beam-lime]="type() === 1"
+          [class.bg-beam-lime/10]="type() === 1"
+          [class.border-aurora-line-strong]="type() !== 1"
+          (click)="type.set(1)"
+        >
+          <ls-icon name="volume" [size]="16" />
+          <span>{{ 'common.voiceChannel' | t }}</span>
+        </button>
+      </div>
+    </fieldset>
+
+    <div class="flex justify-end gap-2 pt-2">
+      <button type="button" class="aurora-btn-ghost" (click)="dismiss.emit()">{{ 'common.cancel' | t }}</button>
+      <button type="submit" class="aurora-btn-primary" [disabled]="channelForm().invalid() || pending()">
+        {{ 'common.create' | t }}
+      </button>
+    </div>
+  </form>
+</ls-modal>

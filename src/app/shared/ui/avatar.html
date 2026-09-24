@@ -1,0 +1,16 @@
+@if (src()) {
+  <img
+    [src]="src()"
+    [alt]="name() || 'avatar'"
+    [class]="sizeClass()"
+    class="object-cover ring-1 ring-white/10"
+  />
+} @else {
+  <div
+    [class]="sizeClass()"
+    class="flex items-center justify-center bg-gradient-to-br from-beam-cyan/30 to-beam-violet/40 font-semibold text-ink ring-1 ring-white/10"
+    [attr.data-initials]="name() | lsInitials"
+  >
+    {{ name() | lsInitials }}
+  </div>
+}

@@ -1,0 +1,43 @@
+<div class="flex h-screen overflow-hidden bg-aurora-base text-ink">
+  <!-- Mobile top bar -->
+  <header class="fixed inset-x-0 top-0 z-30 flex h-12 items-center justify-between border-b border-aurora-line bg-aurora-panel/90 px-3 backdrop-blur lg:hidden">
+    <button type="button" class="aurora-btn-ghost !px-2" (click)="toggleMobileSidebar()" aria-label="Menu">
+      <ls-icon name="menu" [size]="18" />
+    </button>
+    <span class="beam-text text-sm font-bold">{{ 'app.name' | t }}</span>
+    <a routerLink="/app/settings/profile" class="aurora-btn-ghost !px-2" [attr.aria-label]="'shell.profile' | t">
+      <ls-icon name="user" [size]="18" />
+    </a>
+  </header>
+
+  <div class="flex w-full pt-12 lg:pt-0">
+    <!-- Server rail -->
+    <ls-server-rail class="hidden lg:flex" />
+
+    <!-- Sidebar: channels + user -->
+    <aside
+      class="fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-aurora-line bg-aurora-panel pt-12 transition-transform duration-200 lg:static lg:z-auto lg:w-64 lg:translate-x-0 lg:pt-0"
+      [class.-translate-x-full]="!mobileSidebarOpen()"
+      [class.translate-x-0]="mobileSidebarOpen()"
+    >
+      <ls-channel-sidebar (navigate)="closeMobileSidebar()" class="min-h-0 flex-1" />
+      <ls-user-bar class="border-t border-aurora-line" />
+    </aside>
+
+    @if (mobileSidebarOpen()) {
+      <button
+        type="button"
+        class="fixed inset-0 z-30 bg-aurora-void/70 lg:hidden"
+        [attr.aria-label]="'common.close' | t"
+        (click)="closeMobileSidebar()"
+      ></button>
+    }
+
+    <!-- Main -->
+    <main class="min-w-0 flex-1 overflow-y-auto bg-aurora-base">
+      <router-outlet />
+    </main>
+  </div>
+
+  <ls-toast-host />
+</div>

@@ -1,0 +1,28 @@
+<div class="pointer-events-none fixed right-4 bottom-4 z-[60] flex w-full max-w-sm flex-col gap-2">
+  @for (toast of toasts.toasts(); track toast.id) {
+    <div
+      class="aurora-card animate-fade-in-up pointer-events-auto flex items-start gap-3 rounded-lg px-4 py-3 text-sm shadow-glow"
+      [class.border-beam-lime/40]="toast.kind === 'success'"
+      [class.border-beam-rose/40]="toast.kind === 'error'"
+      role="status"
+    >
+      <span
+        class="mt-0.5"
+        [class.text-beam-lime]="toast.kind === 'success'"
+        [class.text-beam-rose]="toast.kind === 'error'"
+        [class.text-beam-cyan]="toast.kind === 'info'"
+      >
+        <ls-icon [name]="toast.kind === 'error' ? 'alert' : toast.kind === 'success' ? 'check' : 'spark'" [size]="16" />
+      </span>
+      <p class="flex-1 text-ink">{{ toast.message }}</p>
+      <button
+        type="button"
+        class="text-ink-dim transition hover:text-ink"
+        [attr.aria-label]="'common.close' | t"
+        (click)="toasts.dismiss(toast.id)"
+      >
+        <ls-icon name="x" [size]="14" />
+      </button>
+    </div>
+  }
+</div>

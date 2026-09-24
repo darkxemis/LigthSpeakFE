@@ -1,0 +1,63 @@
+<nav
+  class="flex w-18 flex-col items-center gap-2 border-r border-aurora-line bg-aurora-void/60 py-3"
+  [attr.aria-label]="'shell.yourServers' | t"
+>
+  <a
+    routerLink="/app"
+    class="group relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-beam-cyan to-beam-lime text-aurora-void shadow-beam transition hover:brightness-110"
+    [attr.title]="'app.name' | t"
+  >
+    <ls-icon name="spark" [size]="22" [strokeWidth]="2" />
+  </a>
+
+  <div class="my-1 h-px w-8 bg-aurora-line-strong"></div>
+
+  @for (server of servers.servers(); track server.id) {
+    <a
+      [routerLink]="['/app/servers', server.id]"
+      class="group relative flex h-12 w-12 items-center justify-center rounded-xl border border-aurora-line bg-aurora-panel text-sm font-semibold transition hover:border-beam-cyan/40 hover:bg-aurora-hover"
+      [class.!border-beam-cyan]="servers.selectedServerId() === server.id"
+      [title]="server.name"
+    >
+      @if (server.iconUrl) {
+        <img [src]="server.iconUrl" [alt]="server.name" class="h-full w-full rounded-xl object-cover" />
+      } @else {
+        <span class="beam-text text-xs">{{ server.name | slice: 0:2 | uppercase }}</span>
+      }
+      @if (servers.selectedServerId() === server.id) {
+        <span class="absolute -left-3 h-8 w-1 rounded-full bg-gradient-to-b from-beam-cyan to-beam-lime"></span>
+      }
+    </a>
+  }
+
+  <button
+    type="button"
+    class="flex h-12 w-12 items-center justify-center rounded-xl border border-dashed border-aurora-line-strong text-ink-muted transition hover:border-beam-lime/50 hover:text-beam-lime"
+    [attr.title]="'shell.createServer' | t"
+    (click)="createOpen.set(true)"
+  >
+    <ls-icon name="plus" [size]="20" />
+  </button>
+
+  <button
+    type="button"
+    class="flex h-12 w-12 items-center justify-center rounded-xl border border-dashed border-aurora-line-strong text-ink-muted transition hover:border-beam-cyan/50 hover:text-beam-cyan"
+    [attr.title]="'shell.joinServer' | t"
+    (click)="joinOpen.set(true)"
+  >
+    <ls-icon name="inbox" [size]="20" />
+  </button>
+
+  <div class="mt-auto">
+    <a
+      routerLink="/app/settings/profile"
+      class="flex h-12 w-12 items-center justify-center rounded-xl text-ink-muted transition hover:bg-aurora-hover hover:text-ink"
+      [attr.title]="'shell.userSettings' | t"
+    >
+      <ls-icon name="settings" [size]="20" />
+    </a>
+  </div>
+</nav>
+
+<ls-create-server-dialog [open]="createOpen()" (dismiss)="createOpen.set(false)" (created)="onCreated($event)" />
+<ls-join-server-dialog [open]="joinOpen()" (dismiss)="joinOpen.set(false)" (joined)="onJoined($event)" />

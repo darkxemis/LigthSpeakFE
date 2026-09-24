@@ -1,0 +1,37 @@
+<ls-modal
+  [open]="open()"
+  [title]="'server.create.title' | t"
+  [subtitle]="'server.create.subtitle' | t"
+  (dismiss)="dismiss.emit()"
+>
+  <form class="space-y-4" novalidate (submit)="onSubmit(); $event.preventDefault()">
+    @if (error()) {
+      <p class="rounded-md border border-beam-rose/30 bg-beam-rose/10 px-3 py-2 text-sm text-beam-rose" role="alert">
+        {{ error() }}
+      </p>
+    }
+
+    <div>
+      <label class="aurora-label" for="server-name">{{ 'server.create.nameLabel' | t }}</label>
+      <input
+        id="server-name"
+        class="aurora-input"
+        [formField]="createForm.name"
+        [placeholder]="'server.create.namePlaceholder' | t"
+        autocomplete="off"
+      />
+      @if (createForm.name().touched() && createForm.name().invalid()) {
+        <p class="mt-1 text-xs text-beam-rose">
+          {{ (createForm.name().errors()[0]?.message ?? 'validation.required') | t }}
+        </p>
+      }
+    </div>
+
+    <div class="flex justify-end gap-2 pt-2">
+      <button type="button" class="aurora-btn-ghost" (click)="dismiss.emit()">{{ 'common.cancel' | t }}</button>
+      <button type="submit" class="aurora-btn-primary" [disabled]="createForm().invalid() || pending()">
+        {{ 'server.create.submit' | t }}
+      </button>
+    </div>
+  </form>
+</ls-modal>
